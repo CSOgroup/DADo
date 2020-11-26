@@ -166,8 +166,8 @@ get_auc_ratio <- function(fcc_vect, fcc_permDT, permQt=0.95, doPlot=FALSE,
   permut_FCC_unsort <- fcc_permDT
   permut_FCC <- apply(permut_FCC_unsort, 2, sort, decreasing=TRUE)
   rownames(permut_FCC) <- NULL
-  cat(paste0("... found obs. TADs:\t", length(obs_fcc), "\n"))
-  cat(paste0("... found permut. TADs:\t", nrow(permut_FCC), "\n"))
+  cat(paste0("... found obs. domains:\t", length(obs_fcc), "\n"))
+  cat(paste0("... found permut. domains:\t", nrow(permut_FCC), "\n"))
   maxTADs <- max(c(length(obs_fcc), nrow(permut_FCC)))
   
   maxRankPlot <- ceiling(maxTADs/1000)*1000
@@ -190,7 +190,7 @@ get_auc_ratio <- function(fcc_vect, fcc_permDT, permQt=0.95, doPlot=FALSE,
   
   if(doPlot){
     pct_inc_qt <- round(auc_obs/auc_permutQt,2)
-    my_xlab <- paste0("TADs ranked by FCC")
+    my_xlab <- paste0("Domains ranked by FCC")
 	my_ylab <- paste0("FCC cumulative sum")
     par(bty="l")
     plot(obs_cumsum ~ x_val,
@@ -237,14 +237,14 @@ get_auc_ratio <- function(fcc_vect, fcc_permDT, permQt=0.95, doPlot=FALSE,
 #######################################################################################################################
 #######################################################################################################################
 #######################################################################################################################
-#' Mean intra-TAD correlation
+#' Mean intra-domain correlation
 #'
-#' Function the average pairwise correlations within TADs.
+#' Function the average pairwise correlations within domains.
 #'
-#' @param gene2tad_dt Dataframe with gene-to-TAD assignment (required columns: "entrezID" for gene IDs, "region" for TAD IDs).
+#' @param gene2tad_dt Dataframe with gene-to-domain assignment (required columns: "entrezID" for gene IDs, "region" for domain IDs).
 #' @param expr_dt Dataframe with gene expression values for which to compute correlation (row names should be gene IDs; all gene IDs from gene2tad_dt should be available).
 #' @param corrMeth Correlation method (one of "pearson", "kendall"or "spearman"; default:"pearson").
-#' @param minNbrGenes Compute correlation for a TAD only if >= minNbrGenes belong to it.
+#' @param minNbrGenes Compute correlation for a domain only if >= minNbrGenes belong to it.
 #' @param withDiag If correlation with itself should be included (default: FALSE).
 #' @param nCpu Number available CPU.
 #' @return A 2-column dataframe (region/meanCorr colums).
@@ -282,13 +282,13 @@ get_meanCorr <- function(gene2tad_dt, exprd_dt, corrMeth="pearson",  minNbrGenes
 #######################################################################################################################
 #######################################################################################################################
 #######################################################################################################################
-#' Correlation between gene expression and purity by TAD
+#' Correlation between gene expression and purity by domain
 #'
-#' Function the correlation between gene expression and purity for all TADs.
+#' Function the correlation between gene expression and purity for all domains.
 #'
 #' @param exprTable Dataframe with gene expression values for which to compute correlation (row names should be gene IDs; all gene IDs from g2tTable should be available).
 #' @param purityTable Dataframe with sample purity values (required columns: purityCol and sampleCol).
-#' @param g2tTable Dataframe with gene-to-TAD assignment (required columns: "entrezID" for gene IDs, "region" for TAD IDs).
+#' @param g2tTable Dataframe with gene-to-domain assignment (required columns: "entrezID" for gene IDs, "region" for domain IDs).
 #' @param all_samples Vector of samples. Should match exprTable columns and sampleCol column of purityTable. 
 #' @param purityCol Name of the column of purityTable that holds purity values.
 #' @param sampleCol Name of the column of purityTable that holds sample IDs.
@@ -296,7 +296,7 @@ get_meanCorr <- function(gene2tad_dt, exprd_dt, corrMeth="pearson",  minNbrGenes
 #' @param logOffset Numeric value added to gene expression before applying transfExpr (might be useful for log-transformation).
 #' @param corrMeth Correlation method (one of "pearson", "kendall"or "spearman"; default:"pearson").
 #' @param nCpu Number available CPU.
-#' @return A 4-column dataframe (nSampWithPurity/region/entrezID/purityCorr colums). The returned dataframe is not averaged at TAD level.
+#' @return A 4-column dataframe (nSampWithPurity/region/entrezID/purityCorr colums). The returned dataframe is not averaged at domain level.
 #' @export
 
   get_meanPurityCorr <- function(exprTable, purityTable, g2tTable, all_samples, purityCol, sampleCol="Sample.ID",

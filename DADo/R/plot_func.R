@@ -2,12 +2,12 @@
 #######################################################################################################################
 #######################################################################################################################
 #######################################################################################################################
-#' Plot TADs of a conserved region
+#' Plot domains of a conserved region
 #'
-#' Function to plot the TADs and genes of a conserved region.
+#' Function to plot the domains and genes of a conserved region.
 #'
 #' @param genes_dt The text to be printed. Should contain at least the following columns: symbol/chromo/start/end/<count>
-#' @param tads_dt Dataframe with information regarding conserved TADs to plot. Should contain at least the following columns: dataset/dsCat/cond1/cond2/chromo/start/end/<upCond>. Datasets will be grouped according to dsCat.
+#' @param tads_dt Dataframe with information regarding conserved domains to plot. Should contain at least the following columns: dataset/dsCat/cond1/cond2/chromo/start/end/<upCond>. Datasets will be grouped according to dsCat.
 #' @param dsCat_cols Should be a named vector of colors. The names should match the levels of tads_dt$dsCat.
 #' @param ... Other parameters for fine-tuning the plot (might be to look a bit in the code to adapt to your data).
 #' @return The plot (ggplot).
@@ -137,7 +137,7 @@ plot_conservedRegions <- function(genes_dt, tads_dt,
   })
 
 
-####>>>>> UPDATE HERE IN CASE THERE ARE SEVERAL TADs BY DATASET
+####>>>>> UPDATE HERE IN CASE THERE ARE SEVERAL DOMAINS BY DATASET
   all_tad_cols <- unlist(sapply(as.numeric(table(tads_dt$ds_rank)), function(x) rep(tad_bicols, ceiling(x/2) )[1:x]))
   stopifnot(length(all_tad_cols) == nrow(tads_dt))
   tads_dt$tadLineCol <- all_tad_cols
@@ -176,7 +176,7 @@ plot_conservedRegions <- function(genes_dt, tads_dt,
     }
 
 
-####>>>>> UPDATE HERE IN CASE THERE ARE SEVERAL TADs BY DATASET
+####>>>>> UPDATE HERE IN CASE THERE ARE SEVERAL DOMAINS BY DATASET
   ds_tads_dt <- tads_dt[,c("start", "ds_rank", "ds_lab", "ds_col")]
   ds_tads_dt <- aggregate(start~., data=ds_tads_dt, FUN=min)
   stopifnot(!duplicated(ds_tads_dt$ds_lab))
@@ -218,7 +218,7 @@ plot_conservedRegions <- function(genes_dt, tads_dt,
 #      hjust         = 1, parse = T, size=3#,
 #      # force_pull   = 0
 #    ) +
- ####>>>>> UPDATE HERE IN CASE THERE ARE SEVERAL TADs BY DATASET
+ ####>>>>> UPDATE HERE IN CASE THERE ARE SEVERAL DOMAINS BY DATASET
     xlim(min(c(ds_tads_dt$start, genes_dt$start)- axisOffset), NA) +
     geom_text_repel(
       aes(x = ds_tads_dt$start, y =  ds_tads_dt$ds_rank, label = ds_tads_dt$ds_lab), inherit.aes = FALSE,
@@ -247,14 +247,14 @@ plot_conservedRegions <- function(genes_dt, tads_dt,
 #######################################################################################################################
 #######################################################################################################################
 #######################################################################################################################
-#' Volcano plot TAD meanLogFC and meanCorr 
+#' Volcano plot domain meanLogFC and meanCorr 
 #'
-#' Function that returns a volcano-like plot of TAD meanLogFC and intra-TAD meanCorr.
+#' Function that returns a volcano-like plot of domain meanLogFC and intra-domain meanCorr.
 #'
-#' @param meanCorr Vector of intra-TAD mean correlations (vector names should be TAD IDs).
-#' @param meanFC Vector of TAD meanLogFC (vector names should be TAD IDs).
-#' @param comb_pval Vector of TAD p-values (vector names should be TAD IDs).
-#' @param tads_to_annot (optional) TAD that should be annotated with a label.
+#' @param meanCorr Vector of intra-domain mean correlations (vector names should be domain IDs).
+#' @param meanFC Vector of domain meanLogFC (vector names should be domain IDs).
+#' @param comb_pval Vector of domain p-values (vector names should be domain IDs).
+#' @param tads_to_annot (optional) Domain that should be annotated with a label.
 #' @param padjusted If the p-values are already adjusted (BH method).
 #' @param ... Other parameters for fine-tuning the plot.
 #' @return The plot (ggplot).
@@ -264,8 +264,8 @@ plot_conservedRegions <- function(genes_dt, tads_dt,
 plot_volcanoTADsCorrFC <- function(meanCorr, meanFC, comb_pval, 
                                    padjusted=FALSE,
                                    tads_to_annot=NULL,
-                                   x_lab="TAD mean LogFC",
-                                   y_lab="TAD mean intraCorr",
+                                   x_lab="Domain mean LogFC",
+                                   y_lab="Domain mean intraCorr",
                                    plotTit=NULL,
                                    subTit=NULL,
                                    fcUpDownThresh=0,
@@ -312,8 +312,8 @@ plot_volcanoTADsCorrFC <- function(meanCorr, meanFC, comb_pval,
   nSignif <- sum(ex_DT$adjPvalComb<=signifThresh)
   nVerySignif <- sum(ex_DT$adjPvalComb<=verySignifThresh)
   
-  if(is.null(plotTit)) plotTit <- paste0("TAD meanLogFC and meanCorr")
-  if(is.null(subTit)) subTit <- paste0("# TADs=", nrow(ex_DT), "; # signif.<=", signifThresh, "=",nSignif,"; # signif.<=", verySignifThresh, "=",nVerySignif)
+  if(is.null(plotTit)) plotTit <- paste0("Domain meanLogFC and meanCorr")
+  if(is.null(subTit)) subTit <- paste0("# Domains=", nrow(ex_DT), "; # signif.<=", signifThresh, "=",nSignif,"; # signif.<=", verySignifThresh, "=",nVerySignif)
   
   ex_DT$adjPvalComb_log10_col <- ex_DT$adjPvalComb_log10
   ex_DT$adjPvalComb_log10_col[ex_DT$adjPvalComb_log10_col <= -log10(signifThresh)] <- -log10(signifThresh)
@@ -367,7 +367,7 @@ plot_volcanoTADsCorrFC <- function(meanCorr, meanFC, comb_pval,
                shape=21,
                aes(size = adjPvalComb_log10_col, color = dotcol_lab), stroke=1)+
     
-    labs( size= "TAD adj. p-val", fill="")+
+    labs( size= "Domain adj. p-val", fill="")+
     geom_label_repel(data = ex_DT[ex_DT$region %in% tads_to_annot,],
                      aes(x= meanLogFC, 
                          y=meanCorr, label=region),
@@ -412,18 +412,31 @@ plot_volcanoTADsCorrFC <- function(meanCorr, meanFC, comb_pval,
 #######################################################################################################################
 #######################################################################################################################
 #######################################################################################################################
-#' Smile plot TAD ratioDown concordance
+#' Smile plot domain ratioDown concordance
 #'
-#' Function that returns line and histogram plots of intra-TAD ratioDown concordance (similar to Fig. 2F of LeDily et al. 2014)
+#' Function that returns line and histogram plots of intra-domain ratioDown concordance (similar to Fig. 2F of LeDily et al. 2014)
 #'
-#' @param observed_rD Vector of intra-TAD ratioDown (vector names should be TAD IDs).
-#' @param permut_rD_dt Data frame of ratioDown for the permutations (rownames should be TAD IDs, each column a permutation).
+#' @param observed_rD Vector of intra-domain ratioDown (vector names should be domain IDs).
+#' @param permut_rD_dt Data frame of ratioDown for the permutations (rownames should be domain IDs, each column a permutation).
 #' @param ... Other parameters for fine-tuning the plot.
 #' @return A list containing the two plots (1st the line plot, 2nd the histogram plot).
 #' @export
-#' 
-#' 
 
+
+
+plot_smileRatioDownConcord <- function(observed_rD,
+                                       permut_rD_dt, 
+                                       plotTit1="Smile plot of domain ratioDown concordance",
+                                       concordThresh=0.75,
+                                       plotTit2=NULL,
+                                       subtitDir1=NULL,
+                                       subtitDir2=NULL,
+                                       obsCol="bisque",
+                                       obsColText="bisque2",
+                                       permutCol="mediumseagreen",
+                                       histBreakStep=0.1){
+                                       
+                                       
 errbar <- function (x, y, yplus, yminus, cap = 0.015, main = NULL, sub = NULL, 
           xlab = as.character(substitute(x)), ylab = if (is.factor(x) || 
                                                          is.character(x)) "" else as.character(substitute(y)), 
@@ -493,20 +506,9 @@ errbar <- function (x, y, yplus, yminus, cap = 0.015, main = NULL, sub = NULL,
   segments(xstart, yplus, xend, yplus, lwd = lwd, lty = lty, 
            col = errbar.col)
   return(invisible())
-}
-
-
-plot_smileRatioDownConcord <- function(observed_rD,
-                                       permut_rD_dt, 
-                                       plotTit1="Smile plot of TAD ratioDown concordance",
-                                       concordThresh=0.75,
-                                       plotTit2=NULL,
-                                       subtitDir1=NULL,
-                                       subtitDir2=NULL,
-                                       obsCol="bisque",
-                                       obsColText="bisque2",
-                                       permutCol="mediumseagreen",
-                                       histBreakStep=0.1){
+}                                       
+                                       
+                                       
 
   # require(Hmisc) # for errbar  
   nRandom <- ncol(permut_rD_dt)
@@ -586,7 +588,7 @@ plot_smileRatioDownConcord <- function(observed_rD,
   rel_ycoord <- rel_ycoord/100
   
   ####### 1st PLOT HERE
-  myxlab <-  paste0("% of down-regulated genes per TAD")
+  myxlab <-  paste0("% of down-regulated genes per domain")
   
   # A) TOP PLOT - smile plot
   plot(rel_logRatio ~ rel_ycoord, type="l",axes=F, cex.main=0.9,

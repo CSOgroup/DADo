@@ -2,12 +2,12 @@
 % Please edit documentation in R/calcByRegion_func.R
 \name{get_FCdownByRegion_v2}
 \alias{get_FCdownByRegion_v2}
-\title{RatioFC by TADs}
+\title{RatioFC by domain}
 \usage{
 get_FCdownByRegion_v2(g2TADdt, DEdt)
 }
 \arguments{
-\item{g2TADdt}{Gene-to-TAD dataframe.}
+\item{g2TADdt}{Gene-to-domain dataframe.}
 
 \item{DEdt}{Differential expression table.}
 }

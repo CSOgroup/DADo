@@ -54,13 +54,13 @@
 
 
 # INPUT:
-#   - table with signif. TADs:
+#   - table with signif. domains:
 #   dataset / region / 
 #   
-#   - coordinates of the TADs:
+#   - coordinates of the domains:
 #   dataset / region / chromo / start / end 
 # 
-#  - gene-to-TAD dt [should be processed to contain only the pip genes ! ]
+#  - gene-to-domain dt [should be processed to contain only the pip genes ! ]
 #     dataset / entrezID / chromo / start / end / region / symbol
 
 # column order does not matter
@@ -74,20 +74,20 @@
 #######################################################################################################################
 #######################################################################################################################
 #######################################################################################################################
-#' Retrieve consensus regions for a list of TADs.
+#' Retrieve consensus regions for a list of domains.
 #'
-#' Retrieve region corresponding to overlapping TADs.
+#' Retrieve region corresponding to overlapping domains.
 #'
 #' @param signif_dt Dataframe with the list of TAds that have to be matched (columns: dataset/region).
-#' @param all_tad_pos_dt Coordinates of the TADs hold in signif_dt (colums:  dataset/chromo/region/start/end).
-#' @param all_g2t_dt Gene-to-TAD assignment for the TADs hold in signif_dt (columns: dataset/entrezID/chromo/start/end/region/symbol).
+#' @param all_tad_pos_dt Coordinates of the domains hold in signif_dt (colums:  dataset/chromo/region/start/end).
+#' @param all_g2t_dt Gene-to-domain assignment for the domains hold in signif_dt (columns: dataset/entrezID/chromo/start/end/region/symbol).
 #' @param minOverlapBpRatio Retain only matches with >= minOverlapBpRatio bp overlap (filter 1).
 #' @param minIntersectGenes Retain only conserved regions with >= minIntersectGenes genes at the intersect (filter 2).
 #' @param gene_matching_fuse_threshold Merge conserved regions that have >= gene_matching_fuse_threshold % gene overlap (after filter 2).
 #' @param nCpu Number of CPU available.
 #' @param logFile If provided, write logs in this file.
 #' @param verbose Verbose or not function execution.
-#' @return A list of four elements: the all-vs-all matching table ("matching_table"), the conserved regions with the corresponding TADs ("conserved_signif_tads"), the conserved regions with the corresponding intersect genes ("conserved_signif_intersect_genes"), the list of parameters used for the filters  ("parameters").
+#' @return A list of four elements: the all-vs-all matching table ("matching_table"), the conserved regions with the corresponding domains ("conserved_signif_tads"), the conserved regions with the corresponding intersect genes ("conserved_signif_intersect_genes"), the list of parameters used for the filters  ("parameters").
 #' @export
 #' 
 
@@ -124,7 +124,7 @@ get_conservedRegion <- function(
   all_tad_pos_dt$region <- as.character(all_tad_pos_dt$region)
   all_tad_pos_dt$dataset <- as.character(all_tad_pos_dt$dataset)
   
-  # for all,  use as ID dataset + TAD label -> this should be unique
+  # for all,  use as ID dataset + domain label -> this should be unique
   signif_dt$regID <- file.path(signif_dt$dataset, signif_dt$region)
   stopifnot(!duplicated(signif_dt$regID))
   all_g2t_dt$regID <- file.path(all_g2t_dt$dataset, all_g2t_dt$region)
@@ -138,7 +138,7 @@ get_conservedRegion <- function(
   stopifnot(signif_dt$regID %in% all_g2t_dt$regID)
   stopifnot(signif_dt$regID %in% all_tad_pos_dt$regID)
   
-  # => I am only interested in the TADs that are passed in the signif tables, 
+  # => I am only interested in the domains that are passed in the signif tables, 
   # so filter the other tables in case they have extra information
   all_g2t_dt <- all_g2t_dt[all_g2t_dt$regID %in% signif_dt$regID,]
   stopifnot(nrow(all_g2t_dt) > 0)

@@ -2,12 +2,12 @@
 % Please edit documentation in R/calcByRegion_func.R
 \name{get_downByRegion_v2}
 \alias{get_downByRegion_v2}
-\title{RatioDown by TADs}
+\title{RatioDown by domain}
 \usage{
 get_downByRegion_v2(g2TADdt, DEdt)
 }
 \arguments{
-\item{g2TADdt}{Gene-to-TAD dataframe.}
+\item{g2TADdt}{Gene-to-domain dataframe.}
 
 \item{DEdt}{Differential expression table.}
 }

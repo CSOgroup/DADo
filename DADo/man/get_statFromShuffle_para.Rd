@@ -2,7 +2,7 @@
 % Please edit documentation in R/calcByRegion_func.R
 \name{get_statFromShuffle_para}
 \alias{get_statFromShuffle_para}
-\title{RatioFC by TADs}
+\title{RatioFC by domain}
 \usage{
 get_statFromShuffle_para(DEdt, shuffData, stat, geneIDlist = NULL,
   ncpu = 2, TADonly = F)
@@ -16,7 +16,7 @@ get_statFromShuffle_para(DEdt, shuffData, stat, geneIDlist = NULL,
 
 \item{ncpu}{The number of CPUs to use.}
 
-\item{TADonly}{If only genes from TADs should be used.}
+\item{TADonly}{If only genes from domains should be used.}
 }
 \value{
 The score for each permtuation.

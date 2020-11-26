@@ -2,17 +2,17 @@
 % Please edit documentation in R/scores_func.R
 \name{get_meanCorr}
 \alias{get_meanCorr}
-\title{Mean intra-TAD correlation}
+\title{Mean intra-domain correlation}
 \usage{
 get_meanCorr(gene2tad_dt, exprd_dt, corrMeth = "pearson",
   minNbrGenes = 3, withDiag = FALSE, nCpu = 2)
 }
 \arguments{
-\item{gene2tad_dt}{Dataframe with gene-to-TAD assignment (required columns: "entrezID" for gene IDs, "region" for TAD IDs).}
+\item{gene2tad_dt}{Dataframe with gene-to-domain assignment (required columns: "entrezID" for gene IDs, "region" for domain IDs).}
 
 \item{corrMeth}{Correlation method (one of "pearson", "kendall"or "spearman"; default:"pearson").}
 
-\item{minNbrGenes}{Compute correlation for a TAD only if >= minNbrGenes belong to it.}
+\item{minNbrGenes}{Compute correlation for a domain only if >= minNbrGenes belong to it.}
 
 \item{withDiag}{If correlation with itself should be included (default: FALSE).}
 
@@ -24,5 +24,5 @@ get_meanCorr(gene2tad_dt, exprd_dt, corrMeth = "pearson",
 A 2-column dataframe (region/meanCorr colums).
 }
 \description{
-Function the average pairwise correlations within TADs.
+Function the average pairwise correlations within domains.
 }

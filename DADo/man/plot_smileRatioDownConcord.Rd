@@ -2,18 +2,18 @@
 % Please edit documentation in R/plot_func.R
 \name{plot_smileRatioDownConcord}
 \alias{plot_smileRatioDownConcord}
-\title{Smile plot TAD ratioDown concordance}
+\title{Smile plot domain ratioDown concordance}
 \usage{
 plot_smileRatioDownConcord(observed_rD, permut_rD_dt,
-  plotTit1 = "Smile plot of TAD ratioDown concordance",
+  plotTit1 = "Smile plot of domain ratioDown concordance",
   concordThresh = 0.75, plotTit2 = NULL, subtitDir1 = NULL,
   subtitDir2 = NULL, obsCol = "bisque", obsColText = "bisque2",
   permutCol = "mediumseagreen", histBreakStep = 0.1)
 }
 \arguments{
-\item{observed_rD}{Vector of intra-TAD ratioDown (vector names should be TAD IDs).}
+\item{observed_rD}{Vector of intra-domain ratioDown (vector names should be domain IDs).}
 
-\item{permut_rD_dt}{Data frame of ratioDown for the permutations (rownames should be TAD IDs, each column a permutation).}
+\item{permut_rD_dt}{Data frame of ratioDown for the permutations (rownames should be domain IDs, each column a permutation).}
 
 \item{...}{Other parameters for fine-tuning the plot.}
 }
@@ -21,5 +21,5 @@ plot_smileRatioDownConcord(observed_rD, permut_rD_dt,
 A list containing the two plots (1st the line plot, 2nd the histogram plot).
 }
 \description{
-Function that returns line and histogram plots of intra-TAD ratioDown concordance (similar to Fig. 2F of LeDily et al. 2014)
+Function that returns line and histogram plots of intra-domain ratioDown concordance (similar to Fig. 2F of LeDily et al. 2014)
 }

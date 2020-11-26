@@ -2,7 +2,7 @@
 % Please edit documentation in R/scores_func.R
 \name{get_meanPurityCorr}
 \alias{get_meanPurityCorr}
-\title{Correlation between gene expression and purity by TAD}
+\title{Correlation between gene expression and purity by domain}
 \usage{
 get_meanPurityCorr(exprTable, purityTable, g2tTable, all_samples,
   purityCol, sampleCol = "Sample.ID", transfExpr = "log10",
@@ -13,7 +13,7 @@ get_meanPurityCorr(exprTable, purityTable, g2tTable, all_samples,
 
 \item{purityTable}{Dataframe with sample purity values (required columns: purityCol and sampleCol).}
 
-\item{g2tTable}{Dataframe with gene-to-TAD assignment (required columns: "entrezID" for gene IDs, "region" for TAD IDs).}
+\item{g2tTable}{Dataframe with gene-to-domain assignment (required columns: "entrezID" for gene IDs, "region" for domain IDs).}
 
 \item{all_samples}{Vector of samples. Should match exprTable columns and sampleCol column of purityTable.}
 
@@ -30,8 +30,8 @@ get_meanPurityCorr(exprTable, purityTable, g2tTable, all_samples,
 \item{nCpu}{Number available CPU.}
 }
 \value{
-A 4-column dataframe (nSampWithPurity/region/entrezID/purityCorr colums). The returned dataframe is not averaged at TAD level.
+A 4-column dataframe (nSampWithPurity/region/entrezID/purityCorr colums). The returned dataframe is not averaged at domain level.
 }
 \description{
-Function the correlation between gene expression and purity for all TADs.
+Function the correlation between gene expression and purity for all domains.
 }

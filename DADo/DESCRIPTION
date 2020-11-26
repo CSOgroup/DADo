@@ -1,0 +1,23 @@
+Package: DADo
+Title: Differentially Active DOmains (DADo)
+Version: 0.0.0.1
+Authors@R: 
+    person(given = "Marie",
+           family = "Zufferey",
+           role = c("aut", "cre"),
+           email = "marie.zufferey.1@unil.ch")
+Description: Some useful functions for the detection of Differentially Active DOmains (DADo)
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Imports:
+	dplyr,
+	foreach,
+	doMC,
+	ggplot2,
+	ggrepel
+RoxygenNote: 6.1.1
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

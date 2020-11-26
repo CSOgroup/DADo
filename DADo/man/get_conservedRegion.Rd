@@ -2,7 +2,7 @@
 % Please edit documentation in R/conserv_func.R
 \name{get_conservedRegion}
 \alias{get_conservedRegion}
-\title{Retrieve consensus regions for a list of TADs.}
+\title{Retrieve consensus regions for a list of domains.}
 \usage{
 get_conservedRegion(signif_dt, all_tad_pos_dt, all_g2t_dt,
   minOverlapBpRatio = 0.8, minIntersectGenes = 3,
@@ -12,9 +12,9 @@ get_conservedRegion(signif_dt, all_tad_pos_dt, all_g2t_dt,
 \arguments{
 \item{signif_dt}{Dataframe with the list of TAds that have to be matched (columns: dataset/region).}
 
-\item{all_tad_pos_dt}{Coordinates of the TADs hold in signif_dt (colums:  dataset/chromo/region/start/end).}
+\item{all_tad_pos_dt}{Coordinates of the domains hold in signif_dt (colums:  dataset/chromo/region/start/end).}
 
-\item{all_g2t_dt}{Gene-to-TAD assignment for the TADs hold in signif_dt (columns: dataset/entrezID/chromo/start/end/region/symbol).}
+\item{all_g2t_dt}{Gene-to-domain assignment for the domains hold in signif_dt (columns: dataset/entrezID/chromo/start/end/region/symbol).}
 
 \item{minOverlapBpRatio}{Retain only matches with >= minOverlapBpRatio bp overlap (filter 1).}
 
@@ -29,8 +29,8 @@ get_conservedRegion(signif_dt, all_tad_pos_dt, all_g2t_dt,
 \item{verbose}{Verbose or not function execution.}
 }
 \value{
-A list of four elements: the all-vs-all matching table ("matching_table"), the conserved regions with the corresponding TADs ("conserved_signif_tads"), the conserved regions with the corresponding intersect genes ("conserved_signif_intersect_genes"), the list of parameters used for the filters  ("parameters").
+A list of four elements: the all-vs-all matching table ("matching_table"), the conserved regions with the corresponding domains ("conserved_signif_tads"), the conserved regions with the corresponding intersect genes ("conserved_signif_intersect_genes"), the list of parameters used for the filters  ("parameters").
 }
 \description{
-Retrieve region corresponding to overlapping TADs.
+Retrieve region corresponding to overlapping domains.
 }

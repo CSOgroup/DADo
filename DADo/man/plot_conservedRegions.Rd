@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_func.R
 \name{plot_conservedRegions}
 \alias{plot_conservedRegions}
-\title{Plot TADs of a conserved region}
+\title{Plot domains of a conserved region}
 \usage{
 plot_conservedRegions(genes_dt, tads_dt, TADlinecol1 = "darkblue",
   TADlinecol2 = "darkturquoise", consAll_col = "darkgreen",
@@ -15,7 +15,7 @@ plot_conservedRegions(genes_dt, tads_dt, TADlinecol1 = "darkblue",
 \arguments{
 \item{genes_dt}{The text to be printed. Should contain at least the following columns: symbol/chromo/start/end/<count>}
 
-\item{tads_dt}{Dataframe with information regarding conserved TADs to plot. Should contain at least the following columns: dataset/dsCat/cond1/cond2/chromo/start/end/<upCond>. Datasets will be grouped according to dsCat.}
+\item{tads_dt}{Dataframe with information regarding conserved domains to plot. Should contain at least the following columns: dataset/dsCat/cond1/cond2/chromo/start/end/<upCond>. Datasets will be grouped according to dsCat.}
 
 \item{dsCat_cols}{Should be a named vector of colors. The names should match the levels of tads_dt$dsCat.}
 
@@ -25,5 +25,5 @@ plot_conservedRegions(genes_dt, tads_dt, TADlinecol1 = "darkblue",
 The plot (ggplot).
 }
 \description{
-Function to plot the TADs and genes of a conserved region.
+Function to plot the domains and genes of a conserved region.
 }

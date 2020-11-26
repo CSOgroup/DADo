@@ -2,13 +2,13 @@
 % Please edit documentation in R/permutations_func.R
 \name{get_gene2tad_multiPermut}
 \alias{get_gene2tad_multiPermut}
-\title{Gene-to-TAD permutations}
+\title{Gene-to-domain permutations}
 \usage{
 get_gene2tad_multiPermut(g2TADdt, RNAdt, geneIDlist, nClass, withExprClass,
   TADonly, nSimu, nCpu, aggregFun)
 }
 \arguments{
-\item{g2TADdt}{Gene-to-TAD dataframe (expected columns: entrezID, region).}
+\item{g2TADdt}{Gene-to-domain dataframe (expected columns: entrezID, region).}
 
 \item{RNAdt}{Gene expression dataframe (rownames should correspond to entrezID, samples in columns).}
 
@@ -18,7 +18,7 @@ get_gene2tad_multiPermut(g2TADdt, RNAdt, geneIDlist, nClass, withExprClass,
 
 \item{withExprClass}{If shuffling should take place within classes.}
 
-\item{TADonly}{If only genes from TADs should be used.}
+\item{TADonly}{If only genes from domains should be used.}
 
 \item{nSimu}{The number of permutations.}
 

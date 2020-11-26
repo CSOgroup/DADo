@@ -2,19 +2,19 @@
 % Please edit documentation in R/permutations_func.R
 \name{get_ShuffledPositions_vFunct}
 \alias{get_ShuffledPositions_vFunct}
-\title{Gene-to-TAD permutations}
+\title{Gene-to-domain permutations}
 \usage{
 get_ShuffledPositions_vFunct(g2TADdt, geneIDlist, nClass, TADonly,
   withExprClass, geneAggregExpressionDT = NULL, rd_idx = 0)
 }
 \arguments{
-\item{g2TADdt}{Gene-to-TAD dataframe (expected columns: entrezID, region).}
+\item{g2TADdt}{Gene-to-domain dataframe (expected columns: entrezID, region).}
 
 \item{geneIDlist}{List of gene IDs that should be used.}
 
 \item{nClass}{The number of classes of expression in which genes are shuffled.}
 
-\item{TADonly}{If only genes from TADs should be used.}
+\item{TADonly}{If only genes from domains should be used.}
 
 \item{withExprClass}{If shuffling should take place within classes.}
 

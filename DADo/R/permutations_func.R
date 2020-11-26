@@ -13,16 +13,16 @@
 # => aggreg expression, computed only once, RNAdt and aggregFun no need to be passed anymore
 
 
-#' Gene-to-TAD permutations
+#' Gene-to-domain permutations
 #' 
 #' Performs the permutation (parallelized).
 #'
-#' @param g2TADdt Gene-to-TAD dataframe (expected columns: entrezID, region).
+#' @param g2TADdt Gene-to-domain dataframe (expected columns: entrezID, region).
 #' @param RNAdt Gene expression dataframe (rownames should correspond to entrezID, samples in columns).
 #' @param geneIDlist List of gene IDs that should be used.
 #' @param nClass The number of classes of expression in which genes are shuffled.
 #' @param withExprClass If shuffling should take place within classes.
-#' @param TADonly If only genes from TADs should be used.
+#' @param TADonly If only genes from domains should be used.
 #' @param nSimu The number of permutations.
 #' @param nCpu The number of CPUs to use.
 #' @param aggregFun With which function gene expression should be aggregated (across samples).
@@ -58,7 +58,7 @@ get_gene2tad_multiPermut <- function(g2TADdt, RNAdt, geneIDlist, nClass, withExp
   # take only the genes for which we have their positions
   # and subset the rnaseq data for these genes only
   if(TADonly) {
-    # take only the genes that are in TAD
+    # take only the genes that are in domain
     geneListTAD <- geneIDlist[geneIDlist  %in% g2TADdt$entrezID[grep("_TAD", g2TADdt$region)] ]
     RNAdt <- RNAdt[geneListTAD,]
   } else {
@@ -88,7 +88,7 @@ get_gene2tad_multiPermut <- function(g2TADdt, RNAdt, geneIDlist, nClass, withExp
     geneAggregExpression$class <- geneClass
     #save(geneAggregExpression, file="geneAggregExpression.Rdata")
     stopifnot(length(unique(geneAggregExpression$class)) == nClass)
-    # add a column with their initial TAD
+    # add a column with their initial domain
     geneAggregExpression$initRegion <- sapply(geneAggregExpression$gene, function(x) g2TADdt$region[g2TADdt$entrezID==x])
 
 
@@ -132,14 +132,14 @@ get_gene2tad_multiPermut <- function(g2TADdt, RNAdt, geneIDlist, nClass, withExp
 #######################################################################################################################
 #######################################################################################################################
 #######################################################################################################################
-#' Gene-to-TAD permutations
+#' Gene-to-domain permutations
 #' 
 #' Performs the permutation (for 1 permutation).
 #'
-#' @param g2TADdt Gene-to-TAD dataframe (expected columns: entrezID, region).
+#' @param g2TADdt Gene-to-domain dataframe (expected columns: entrezID, region).
 #' @param geneIDlist List of gene IDs that should be used.
 #' @param nClass The number of classes of expression in which genes are shuffled.
-#' @param TADonly If only genes from TADs should be used.
+#' @param TADonly If only genes from domains should be used.
 #' @param withExprClass If shuffling should take place within classes.
 #' @param geneAggregExpressionDT Dataframe with aggregated gene expression (across samples).
 #' @param rd_idx For setting seed.
@@ -172,7 +172,7 @@ get_ShuffledPositions_vFunct <- function(g2TADdt, geneIDlist, nClass, TADonly, w
   # take only the genes for which we have their positions
   # and subset the rnaseq data for these genes only
   if(TADonly) {
-    # take only the genes that are in TAD
+    # take only the genes that are in domain
     geneListTAD <- geneIDlist[geneIDlist  %in% g2TADdt$entrezID[grep("_TAD", g2TADdt$region)] ]
   } else {
     geneListTAD <- geneIDlist[geneIDlist  %in% g2TADdt$entrezID]
@@ -185,7 +185,7 @@ get_ShuffledPositions_vFunct <- function(g2TADdt, geneIDlist, nClass, TADonly, w
     stopifnot(!is.null(geneAggregExpressionDT))     # 16.08.2019 now computed once and passed from parent function
     geneAggregExpression <- geneAggregExpressionDT
 
-    # now, for each class, reshuffle the TAD -> new column with the reshuffled positions
+    # now, for each class, reshuffle the domain -> new column with the reshuffled positions
 
 	stopifnot(unique(as.character(geneAggregExpression$class)) == paste0(1:nClass)) # => this is why the foreach assignment works !
 
@@ -216,12 +216,12 @@ get_ShuffledPositions_vFunct <- function(g2TADdt, geneIDlist, nClass, TADonly, w
 #######################################################################################################################
 #######################################################################################################################
 #######################################################################################################################
-#' Sample genes across TAD boundaries
+#' Sample genes across domain boundaries
 #' 
-#' Sample genes across TAD boundaries (as many as there are in a given TAD).
+#' Sample genes across domain boundaries (as many as there are in a given domain).
 #'
-#' @param g2t_DT Gene-to-TAD dataframe (expected columns: entrezID, region, end, start).
-#' @param tadpos_DT Dataframe with TAD positions (expected columns: region, end, start).
+#' @param g2t_DT Gene-to-domain dataframe (expected columns: entrezID, region, end, start).
+#' @param tadpos_DT Dataframe with domain positions (expected columns: region, end, start).
 #' @return A list with permutation data (either left or right/left only/right only).
 #' @export
 
@@ -256,7 +256,7 @@ getSampleAcrossBD <- function(g2t_DT, tadpos_DT){
   
   
   sample_around_TADs <- foreach(reg = all_tads) %dopar% {
-    cat("...... start TAD : \t", reg, "\n")
+    cat("...... start domain : \t", reg, "\n")
     
     curr_chromo <- as.character(tadpos_DT$chromo[tadpos_DT$region == reg])
     
@@ -287,7 +287,7 @@ getSampleAcrossBD <- function(g2t_DT, tadpos_DT){
     stopifnot(is.numeric(curr_g2t$start), is.numeric(curr_g2t$end))
     curr_g2t <- curr_g2t[order(curr_g2t$start, curr_g2t$end),,drop=FALSE]
     
-    # distance to TAD center
+    # distance to domain center
     curr_genesOutsideDT <- curr_g2t[ !curr_g2t$entrezID %in% reg_genes,,drop=FALSE]
     stopifnot(nrow(curr_genesOutsideDT) > 0)
     
@@ -369,7 +369,7 @@ getSampleAcrossBD <- function(g2t_DT, tadpos_DT){
       minDist_right = min(all_dist_right),
       maxDist_right = max(all_dist_right)
     )
-  } # end foreach-iterating over TADs
+  } # end foreach-iterating over domains
   names(sample_around_TADs) <- all_tads
   return(sample_around_TADs)
 }

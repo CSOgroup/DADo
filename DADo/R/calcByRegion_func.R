@@ -3,11 +3,11 @@
 #######################################################################################################################
 #######################################################################################################################
 #######################################################################################################################
-#' RatioDown by TADs
+#' RatioDown by domain
 #'
 #' Function that calculates the ratioDown score for each region.
 #'
-#' @param g2TADdt Gene-to-TAD dataframe.
+#' @param g2TADdt Gene-to-domain dataframe.
 #' @param DEdt Differential expression table.
 #' @return The ratioFC score.
 #' @export
@@ -33,11 +33,11 @@ get_downByRegion_v2 <- function(g2TADdt, DEdt) {
 #######################################################################################################################
 #######################################################################################################################
 #######################################################################################################################
-#' RatioFC by TADs
+#' RatioFC by domain
 #'
 #' Function that calculates the ratioFC score for each region.
 #'
-#' @param g2TADdt Gene-to-TAD dataframe.
+#' @param g2TADdt Gene-to-domain dataframe.
 #' @param DEdt Differential expression table.
 #' @return The ratioFC score.
 #' @export
@@ -60,7 +60,7 @@ get_FCdownByRegion_v2 <- function(g2TADdt, DEdt) {
   stopifnot(all(names(totLogFC) == names(negLogFC)))
   all_ratio <- negLogFC/totLogFC[names(negLogFC)]
   
-  # CHANGED 24.01.2018: PROBLEM IF A TAD CONTAINS ALL GENES WITH 0 LOGFC (HAPPENS TOPDOM GSE71119 DEDIFF MFSM)
+  # CHANGED 24.01.2018: PROBLEM IF A DOMAIN CONTAINS ALL GENES WITH 0 LOGFC (HAPPENS TOPDOM GSE71119 DEDIFF MFSM)
   # in this case ratioDown should be zero not NA
   poss_NA <- which(negLogFC==0 & totLogFC==0)
   
@@ -79,7 +79,7 @@ get_FCdownByRegion_v2 <- function(g2TADdt, DEdt) {
 #######################################################################################################################
 # !!!! WARNING PIPELINE VERSION GENE NAMES ARE ROWNAMES NOT 1ST COL
 
-#' RatioFC by TADs
+#' RatioFC by domain
 #'
 #' Function that calculates the ratioFC score for each region.
 #'
@@ -87,7 +87,7 @@ get_FCdownByRegion_v2 <- function(g2TADdt, DEdt) {
 #' @param shuffData The permutation data.
 #' @param stat The score to compute.
 #' @param ncpu The number of CPUs to use.
-#' @param TADonly If only genes from TADs should be used.
+#' @param TADonly If only genes from domains should be used.
 #' @return The score for each permtuation.
 #' @export
 

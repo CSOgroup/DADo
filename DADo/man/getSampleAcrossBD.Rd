@@ -2,18 +2,18 @@
 % Please edit documentation in R/permutations_func.R
 \name{getSampleAcrossBD}
 \alias{getSampleAcrossBD}
-\title{Sample genes across TAD boundaries}
+\title{Sample genes across domain boundaries}
 \usage{
 getSampleAcrossBD(g2t_DT, tadpos_DT)
 }
 \arguments{
-\item{g2t_DT}{Gene-to-TAD dataframe (expected columns: entrezID, region, end, start).}
+\item{g2t_DT}{Gene-to-domain dataframe (expected columns: entrezID, region, end, start).}
 
-\item{tadpos_DT}{Dataframe with TAD positions (expected columns: region, end, start).}
+\item{tadpos_DT}{Dataframe with domain positions (expected columns: region, end, start).}
 }
 \value{
 A list with permutation data (either left or right/left only/right only).
 }
 \description{
-Sample genes across TAD boundaries (as many as there are in a given TAD).
+Sample genes across domain boundaries (as many as there are in a given domain).
 }
