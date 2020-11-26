@@ -1,0 +1,218 @@
+---
+title: "Domain-level statistics"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{domain_level_stats}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Calculation of some domain-level statistics
+
+### Load some packages
+```{r setup}
+rm(list=ls())
+if(!require(DADo))
+  devtools::install_github("marzuf/MANUSCRIPT_FIGURES", subdir="DADo")
+  # alternatively: 
+  # install.packages("DADo_0.0.0.1.tar.gz", repos = NULL, type ="source")
+ # data("norm_ID")
+library(DADo)
+library(doMC)
+library(foreach)
+nCpu <- 2
+registerDoMC(nCpu)
+```
+
+### Prepare the observed data
+``` {r prep_obs}
+# table from gene-level DE analysis:
+data("ENCSR489OCU_NCI-H460_40kb_TCGAluad_norm_luad_DE_topTable") # this loads DE_topTable
+DE_topTable$genes <- as.character(DE_topTable$genes)
+
+# list of genes used in the pipeline
+data("ENCSR489OCU_NCI-H460_40kb_TCGAluad_norm_luad_pipeline_geneList") # this loads pipeline_geneList
+
+# for those genes, I have logFC data
+stopifnot(names(pipeline_geneList) %in% DE_topTable$genes)
+DE_topTable <- DE_topTable[DE_topTable$genes %in% names(pipeline_geneList),]
+DE_topTable$entrezID <- pipeline_geneList[DE_topTable$genes]
+stopifnot(!is.na(DE_topTable$entrezID))
+
+# table with gene-to-domain assignment
+gene2tad_dt <- read.delim(system.file("extdata", "ENCSR489OCU_NCI-H460_all_genes_positions.txt", package = "DADo"),
+                          stringsAsFactors = FALSE,
+                          header=FALSE, 
+                          col.names=c("entrezID", "chromosome", "start", "end", "region"))
+gene2tad_dt$entrezID <- as.character(gene2tad_dt$entrezID)
+
+
+# take only the genes used in the pipeline
+pip_g2t_dt <- gene2tad_dt[gene2tad_dt$entrezID %in% pipeline_geneList,]
+
+# merge to match gene-to-domain and logFC
+merged_dt <- merge(pip_g2t_dt[,c("entrezID", "region")], DE_topTable[,c("logFC", "entrezID")], by="entrezID", all.x=TRUE, all.y=FALSE)
+stopifnot(!is.na(merged_dt))
+``` 
+
+### Compute meanLogFC for a list of domains 
+``` {r meanFC_obs_example}
+# compute the ratioDown for each domain
+meanFC_dt <- aggregate(logFC ~ region, FUN=mean, data=merged_dt)
+colnames(meanFC_dt)[colnames(meanFC_dt) == "logFC"] <- "meanFC"
+obs_meanFC <- setNames(meanFC_dt$meanFC, meanFC_dt$region)
+save(obs_meanFC, file="package_obs_meanFC.RData", version=2)
+``` 
+
+
+### Compute ratioDown for a list of domains 
+
+using the <em>get_ratioDown</em> function:
+
+``` {r ratioDown_obs_example}
+# compute the ratioDown for each domain
+FCC_dt <- aggregate(logFC ~ region, FUN=get_ratioDown, data=merged_dt)
+colnames(FCC_dt)[colnames(FCC_dt) == "logFC"] <- "ratioDown"
+obs_ratioDown <- setNames(FCC_dt$ratioDown, FCC_dt$region)
+save(obs_ratioDown, file="package_obs_ratioDown.RData", version=2)
+``` 
+
+### Compute ratioFC for a list of domains
+
+using the <em>get_ratioFC</em> function:
+
+``` {r ratioFC_obs_example}
+# compute the ratioFC for each domain
+FCC_dt <- aggregate(logFC ~ region, FUN=get_ratioFC, data=merged_dt)
+colnames(FCC_dt)[colnames(FCC_dt) == "logFC"] <- "ratioFC"
+obs_ratioNegFC <- setNames(FCC_dt$ratioFC, FCC_dt$region)
+save(obs_ratioNegFC, file="package_obs_ratioNegFC.RData", version=2)
+``` 
+
+### Compute FCC for a list of domains
+
+using the <em>get_fcc</em> function:
+
+``` {r FCC_obs_example}
+# compute the FCC for each domain
+FCC_dt <- aggregate(logFC ~ region, FUN=get_fcc, data=merged_dt)
+colnames(FCC_dt)[colnames(FCC_dt) == "logFC"] <- "FCC"
+obs_FCC <- setNames(FCC_dt$FCC, FCC_dt$region)
+save(obs_FCC, file="package_obs_FCC.RData", version=2)
+``` 
+
+### Compute FCC for permutation data
+
+using the <em>get_fcc</em> function:
+
+``` {r FCC_permut_example}
+# compute the FCC for the permutation data
+data("cut1000_ENCSR489OCU_NCI-H460_40kb_TCGAluad_norm_luad_permutationsDT") # this loads permutationsDT
+head_sq(permutationsDT)
+
+stopifnot(setequal(rownames(permutationsDT), pipeline_geneList))
+
+tad_levels <- as.character(FCC_dt$region)
+
+all_permut_FCC_dt <- foreach(i = 1:ncol(permutationsDT), .combine='cbind') %dopar% {
+  perm_g2t <- data.frame(entrezID=as.character(rownames(permutationsDT)),
+                        region = as.character(permutationsDT[,i]),
+                        stringsAsFactors = FALSE)
+  perm_merged_dt <- merge(perm_g2t, DE_topTable[,c("logFC", "entrezID")], by="entrezID", all.x=TRUE, all.y=FALSE)
+  stopifnot(!is.na(perm_merged_dt))
+  
+  # compute the FCC for each domain
+  permut_FCC_dt <- aggregate(logFC ~ region, FUN=get_fcc, data=perm_merged_dt)
+  colnames(permut_FCC_dt)[colnames(permut_FCC_dt) == "logFC"] <- "FCC"
+  rownames(permut_FCC_dt) <- as.character(permut_FCC_dt$region)
+  stopifnot(setequal(rownames(permut_FCC_dt), tad_levels))
+  permut_FCC_dt[tad_levels, "FCC", drop=FALSE]
+}
+head_sq(all_permut_FCC_dt)
+``` 
+
+### Compute FCC AUC ratio and plot FCC cumsum curves
+
+using the <em>get_auc_ratio</em> function:
+
+``` {r FCC_AUC_ratio_example, fig.height=8, fig.width=10}
+stopifnot(setequal(names(obs_FCC), rownames(all_permut_FCC_dt)))
+get_auc_ratio(fcc_vect=obs_FCC, 
+              fcc_permDT=all_permut_FCC_dt, 
+              doPlot=T, 
+              main="FCC AUC cumsum curves")
+mtext(text = paste0("ENCSR489OCU_NCI-H460_40kb - TCGAluad_norm_luad"), side=3)
+``` 
+
+### Compute intra-domain mean correlation
+
+using the <em>get_meanCorr</em> function:
+
+``` {r meanIntraCorr}
+data("ENCSR489OCU_NCI-H460_TCGAluad_norm_luad_rna_qqnorm_rnaseqDT") # this loads rna_qqnorm_rnaseqDT
+head_sq(rna_qqnorm_rnaseqDT)
+stopifnot(names(pipeline_geneList) %in% rownames(rna_qqnorm_rnaseqDT))
+rna_qqnorm_rnaseqDT <- rna_qqnorm_rnaseqDT[names(pipeline_geneList),]
+rna_qqnorm_rnaseqDT <- data.frame(rna_qqnorm_rnaseqDT)
+rna_qqnorm_rnaseqDT$newEntrez <- pipeline_geneList[rownames(rna_qqnorm_rnaseqDT)]
+stopifnot(!is.na(rna_qqnorm_rnaseqDT$newEntrez))
+stopifnot(!duplicated(rna_qqnorm_rnaseqDT$newEntrez))
+rownames(rna_qqnorm_rnaseqDT) <- rna_qqnorm_rnaseqDT$newEntrez
+rna_qqnorm_rnaseqDT$newEntrez <- NULL
+stopifnot(pipeline_geneList %in% rownames(rna_qqnorm_rnaseqDT))
+head_sq(rna_qqnorm_rnaseqDT)
+stopifnot(is.character(pip_g2t_dt$entrezID))
+stopifnot(pip_g2t_dt$entrezID %in% rownames(rna_qqnorm_rnaseqDT))
+meanCorr_dt <- get_meanCorr(gene2tad_dt=pip_g2t_dt, exprd_dt=rna_qqnorm_rnaseqDT)
+head(meanCorr_dt)
+obs_meanCorr <- setNames(meanCorr_dt$meanCorr, meanCorr_dt$region)
+save(obs_meanCorr, file="package_meanCorr.RData", version=2)
+``` 
+
+### Combine empirical p-values
+
+using the <em>stouffer</em> function:
+
+``` {r combined_pval, fig.height=6, fig.width=8}
+twoTailsStouffer <- FALSE
+data("ENCSR489OCU_NCI-H460_40kb_TCGAluad_norm_luad_emp_pval_meanLogFC") # this loads emp_pval_meanLogFC
+data("ENCSR489OCU_NCI-H460_40kb_TCGAluad_norm_luad_emp_pval_meanCorr") # this loads emp_pval_meanCorr
+# retrieve domains for which I have empirical p-values for both logFC and meanCorr
+intersectRegions <- intersect(names(emp_pval_meanLogFC), names(emp_pval_meanCorr))
+emp_pval_meanCorr <- emp_pval_meanCorr[intersectRegions]
+emp_pval_meanLogFC <- emp_pval_meanLogFC[intersectRegions]
+stopifnot(!is.na(emp_pval_meanLogFC))
+stopifnot(!is.na(emp_pval_meanCorr))
+stopifnot(names(emp_pval_meanLogFC) == names(emp_pval_meanCorr))
+emp_pval_combined <- unlist(sapply(seq_along(intersectRegions), function(x) 
+                  stouffer(c(emp_pval_meanCorr[x], emp_pval_meanLogFC[x]), two.tails = twoTailsStouffer)))
+names(emp_pval_combined) <- intersectRegions
+head(emp_pval_combined)
+# and adjust for multiple testing
+adj_emp_pval_combined <- p.adjust(emp_pval_combined, method="BH")
+head(adj_emp_pval_combined)
+save(emp_pval_combined, file="package_emp_pval_combined.RData", version=2)
+save(adj_emp_pval_combined, file="package_adj_emp_pval_combined.RData", version=2)
+```
+
+
+### Volcano-like intra-domain corr. vs. domain meanLogFC
+
+``` {r plot_volcano, fig.height=6, fig.width=8}
+stopifnot(setequal(names(obs_meanCorr), names(obs_meanFC)))
+stopifnot(setequal(names(obs_meanCorr), names(adj_emp_pval_combined)))
+
+plot_volcanoTADsCorrFC(meanCorr=obs_meanCorr, 
+                       meanFC=obs_meanFC, 
+                       comb_pval=adj_emp_pval_combined,
+                       padjusted=TRUE,
+                       tads_to_annot = "chr11_TAD390")
+```
