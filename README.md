@@ -1,5 +1,10 @@
 # Differentially Active DOmains (DADo)
 
+
+Repository containing the scripts regarding the algorithm presented in Zufferey et al. 2021
+
+Contact: giovanni.ciriello@unil.ch
+
 ### [pipeline](code)
 
 see instructions [here](code/README.md)
